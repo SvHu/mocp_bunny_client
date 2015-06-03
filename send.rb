@@ -1,18 +1,20 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
+require "bundler/setup"
+
 require "bunny"
 require "thread"
 require "securerandom"
+require 'yaml'
 
-hostname        = "example.com"
-rabbit_user     = "rabbit"
-rabbit_password = "SOmePa$$worD"
+config_file = File.expand_path("config.yml", __dir__)
+attributes = YAML.load_file(config_file)
 
-conn = Bunny.new(:host => hostname, :user => rabbit_user, :password => rabbit_password, 
+conn = Bunny.new(:host => attributes[:hostname], :user => attributes[:rabbit_user], :password => attributes[:rabbit_password], 
   :automatically_recover => false)
 conn.start
 
-ch   = conn.create_channel
+ch = conn.create_channel
 
 class MusicClient
   attr_reader :reply_queue

@@ -1,0 +1,3 @@
+hostname: "example.com"
+rabbit_user: "rabbit"
+rabbit_password: "SOmePa$$worD"

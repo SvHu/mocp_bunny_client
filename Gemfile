@@ -1,4 +1,4 @@
 # A sample Gemfile
 source "https://rubygems.org"
 
-gem "bunny", ">= 0.9.1"
+gem 'bunny', '~> 1.7.0'

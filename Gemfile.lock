@@ -9,4 +9,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bunny (>= 0.9.1)
+  bunny (~> 1.7.0)
