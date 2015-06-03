@@ -5,16 +5,6 @@ require "bundler/setup"
 require "bunny"
 require "thread"
 require "securerandom"
-require 'yaml'
-
-config_file = File.expand_path("config.yml", __dir__)
-attributes = YAML.load_file(config_file)
-
-conn = Bunny.new(:host => attributes[:hostname], :user => attributes[:rabbit_user], :password => attributes[:rabbit_password], 
-  :automatically_recover => false)
-conn.start
-
-ch = conn.create_channel
 
 class MusicClient
   attr_reader :reply_queue
@@ -53,12 +43,3 @@ class MusicClient
     response
   end
 end
-
-client   = MusicClient.new(ch, "musicbox")
-request = ARGF.argv
-puts " [x] Sending #{request.to_s}"
-response = client.call(request)
-
-puts " [.] Response: #{response}"
-ch.close
-conn.close

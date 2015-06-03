@@ -1,0 +1,75 @@
+#!/usr/bin/env ruby
+require 'thor'
+require 'yaml'
+require 'json'
+require_relative '../send'
+
+CONFIG = YAML.load_file(File.expand_path("../config.yml", __dir__))
+
+class MusicControl < Thor
+  no_commands do
+    def send_request(request)
+      conn = Bunny.new(:host => CONFIG["hostname"], :user => CONFIG["rabbit_user"], :password => CONFIG["rabbit_password"], 
+        :automatically_recover => false)
+      conn.start
+
+      ch = conn.create_channel
+      
+      puts " [x] Sending #{request.to_s}"
+      client = MusicClient.new(ch, "musicbox")
+      response = client.call(request)
+      #puts " [.] Response: #{response}"
+      ch.close
+      conn.close
+    end
+  end
+
+  desc "url URL", "Plays song URL or adds it to queue"
+  def url(url)
+    send_request(url)
+  end
+
+  desc "vol LEVEL", "Sets volume level +/-"
+  def vol(level)
+    case level
+      when "+"
+        send_request("+")
+      when "-"
+        send_request("-")
+      else
+        puts "only + or - is permitted to use"
+    end
+  end
+
+  desc "what_song", "Print the information about the currently played file."
+  def what_song
+    send_request("info")
+  end
+
+  desc "next", "Play next song."
+  def next
+    send_request("next")
+  end
+  
+  desc "previous", "Play previous song."
+  def previous
+    send_request("previous")
+  end
+
+  desc "pause", "Pause."
+  def pause
+    send_request("pause")
+  end
+
+  desc "unpause", "Unpause."
+  def unpause
+    send_request("unpause")
+  end
+
+  desc "stop", "Stop playing."
+  def stop
+    send_request("stop")
+  end
+end
+ 
+MusicControl.start(ARGV)
