@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
+
 require 'thor'
 require 'yaml'
 require 'json'
-require_relative '../send'
+require_relative '../music_client'
 
 CONFIG = YAML.load_file(File.expand_path("../config.yml", __dir__))
 
@@ -41,8 +42,8 @@ class MusicControl < Thor
     end
   end
 
-  desc "what_song", "Print the information about the currently played file."
-  def what_song
+  desc "what", "Print the information about the currently played file."
+  def what
     send_request("info")
   end
 
@@ -70,6 +71,27 @@ class MusicControl < Thor
   def stop
     send_request("stop")
   end
+
+  desc "clear", "Clear the playlist."
+  def clear
+    send_request("clear")
+  end
+
+  desc "random AMOUNT", "Adds AMOUNT of random songs from database to queue."
+  def random(amount)
+    send_request("random #{amount}")
+  end
+
+  desc "list", "Lists all songs in db."
+  def list
+    send_request("list")
+  end
+
+  desc "start", "Start playing from the first item on the playlist."
+  def start
+    send_request("play")
+  end
+
 end
  
 MusicControl.start(ARGV)
