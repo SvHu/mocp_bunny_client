@@ -30,7 +30,7 @@ class MusicClient
     end
   end
 
-  def call(request)
+  def call(request, print = true)
     self.call_id = SecureRandom.uuid
 
     @x.publish(request.to_s,
@@ -39,7 +39,7 @@ class MusicClient
       :reply_to       => @reply_queue.name)
 
     lock.synchronize{condition.wait(lock)}
-    puts response
+    puts response if print
     response
   end
 end

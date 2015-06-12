@@ -9,19 +9,20 @@ CONFIG = YAML.load_file(File.expand_path("../config.yml", __dir__))
 
 class MusicControl < Thor
   no_commands do
-    def send_request(request)
-      conn = Bunny.new(:host => CONFIG["hostname"], :user => CONFIG["rabbit_user"], :password => CONFIG["rabbit_password"], 
+    def send_request(request, print = true)
+      conn = Bunny.new(:host => CONFIG["hostname"], :user => CONFIG["rabbit_user"], :password => CONFIG["rabbit_password"],
         :automatically_recover => false)
       conn.start
 
       ch = conn.create_channel
-      
+
       puts " [x] Sending #{request.to_s}"
       client = MusicClient.new(ch, "musicbox")
-      response = client.call(request)
+      response = client.call(request, print)
       #puts " [.] Response: #{response}"
       ch.close
       conn.close
+      response
     end
   end
 
@@ -51,7 +52,7 @@ class MusicControl < Thor
   def next
     send_request("next")
   end
-  
+
   desc "previous", "Play previous song."
   def previous
     send_request("previous")
@@ -84,7 +85,8 @@ class MusicControl < Thor
 
   desc "list", "Lists all songs in db."
   def list
-    send_request("list")
+    playlist = JSON.parse(send_request("list", false))
+    puts playlist
   end
 
   desc "start", "Start playing from the first item on the playlist."
@@ -93,5 +95,5 @@ class MusicControl < Thor
   end
 
 end
- 
+
 MusicControl.start(ARGV)
