@@ -1,5 +1,11 @@
 #!/usr/bin/env ruby
 
+# Change working directory so Bundler can find Gemfile
+THIS_FILE = File.symlink?(__FILE__) ? File.readlink(__FILE__) : __FILE__
+Dir.chdir File.dirname(THIS_FILE)
+require 'rubygems'
+require 'bundler/setup'
+
 require 'thor'
 require 'yaml'
 require 'json'
