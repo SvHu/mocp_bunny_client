@@ -22,7 +22,7 @@ class MusicControl < Thor
 
       ch = conn.create_channel
       
-      puts " [x] Sending #{request.to_s}"
+      #puts " [x] Sending #{request.to_s}"
       client = MusicClient.new(ch, "musicbox")
       response = client.call(request)
       #puts " [.] Response: #{response}"
@@ -88,6 +88,11 @@ class MusicControl < Thor
     send_request("random #{amount}")
   end
 
+  desc "song SONG_NAME", "Tries to play or add to queue existing song in music folder"
+  def song(song_name)
+    send_request("song #{song_name}")
+  end
+
   desc "list", "Lists all songs in db."
   def list
     send_request("list")
@@ -98,6 +103,10 @@ class MusicControl < Thor
     send_request("play")
   end
 
+  desc "destroy", "Delete song from server."
+  def destroy
+    send_request("destroy")
+  end
 end
  
 MusicControl.start(ARGV)
