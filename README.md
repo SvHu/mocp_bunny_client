@@ -1,5 +1,5 @@
 ##  Requirements
-    - Ruby (2.1.x) and `bundler` gem - tested with Ruby 2.1.2p95
+    - Ruby (2.1.x) and `bundler` gem
 
 ## Installation
 
@@ -13,4 +13,13 @@ $ bundle install --path .bundle
 To see all script commands just run:
 ```sh
 $ ./bin/play
+```
+Added support for play to be symlinked into $PATH. Now Bundler finds its files, regardless how the script was called and what the current directory was.
+
+Example:
+
+ln -s /path/to/mocp_bunny_client/bin/play /usr/local/bin
+
+```sh
+play what
 ```

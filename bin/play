@@ -9,6 +9,8 @@ require 'bundler/setup'
 require 'thor'
 require 'yaml'
 require 'json'
+require 'socket'
+
 require_relative '../music_client'
 
 CONFIG = YAML.load_file(File.expand_path("../config.yml", __dir__))
@@ -29,83 +31,102 @@ class MusicControl < Thor
       ch.close
       conn.close
     end
+
+    def ip 
+      IPSocket.getaddress(Socket.gethostname)
+    end
   end
 
   desc "url URL", "Plays song URL or adds it to queue"
   def url(url)
-    send_request(url)
+    data = {type: "url", client: ip, url: url}
+    send_request(JSON.generate(data))
   end
 
   desc "vol LEVEL", "Sets volume level +/-"
   def vol(level)
     case level
       when "+"
-        send_request("+")
+        data = {type: "vol", client: ip, vol_type: "+"}
+        send_request(JSON.generate(data))
       when "-"
-        send_request("-")
+        data = {type: "vol", client: ip, vol_type: "-"}
+        send_request(JSON.generate(data))
       else
-        puts "only + or - is permitted to use"
+        say "only + or - is permitted to use"
     end
   end
 
   desc "what", "Print the information about the currently played file."
   def what
-    send_request("info")
+    data = {type: "info", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "next", "Play next song."
   def next
-    send_request("next")
+    data = {type: "next", client: ip}
+    send_request(JSON.generate(data))
   end
   
   desc "previous", "Play previous song."
   def previous
-    send_request("previous")
+    data = {type: "previous", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "pause", "Pause."
   def pause
-    send_request("pause")
+    data = {type: "pause", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "unpause", "Unpause."
   def unpause
-    send_request("unpause")
+    data = {type: "unpause", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "stop", "Stop playing."
   def stop
-    send_request("stop")
+    data = {type: "stop", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "clear", "Clear the playlist."
   def clear
-    send_request("clear")
+    data = {type: "clear", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "random AMOUNT", "Adds AMOUNT of random songs from database to queue."
   def random(amount)
-    send_request("random #{amount}")
+    data = {type: "random", client: ip, amount: amount}
+    send_request(JSON.generate(data))
   end
 
   desc "song SONG_NAME", "Tries to play or add to queue existing song in music folder"
   def song(song_name)
-    send_request("song #{song_name}")
+    data = {type: "song", client: ip, search: song_name}
+    send_request(JSON.generate(data))
   end
 
   desc "list", "Lists all songs in db."
   def list
-    send_request("list")
+    data = {type: "list", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "start", "Start playing from the first item on the playlist."
-  def start
-    send_request("play")
+  def now
+    data = {type: "play", client: ip}
+    send_request(JSON.generate(data))
   end
 
   desc "destroy", "Delete song from server."
   def destroy
-    send_request("destroy")
+    data = {type: "destroy", client: ip}
+    send_request(JSON.generate(data))
   end
 end
  
