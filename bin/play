@@ -39,21 +39,19 @@ class MusicControl < Thor
 
   desc "url URL", "Plays song URL or adds it to queue"
   def url(url)
+    say set_color "Be patcient, it takes time to convert...", :blue, :bold
     data = {type: "url", client: ip, url: url}
     send_request(JSON.generate(data))
   end
 
-  desc "vol LEVEL", "Sets volume level +/-"
+  desc "vol LEVEL", "Sets volume level +/-. Example: +10 increase volume by 10. 10 sets volume to level 10. -10 decreases volume by 10."
   def vol(level)
     case level
-      when "+"
-        data = {type: "vol", client: ip, vol_type: "+"}
-        send_request(JSON.generate(data))
-      when "-"
-        data = {type: "vol", client: ip, vol_type: "-"}
+      when /^[+-]?[0-9]?[0-9]$/
+        data = {type: "vol", client: ip, vol_level: level}
         send_request(JSON.generate(data))
       else
-        say "only + or - is permitted to use"
+        say "only positive or negative numbers are permitted to use as argument"
     end
   end
 
@@ -117,7 +115,7 @@ class MusicControl < Thor
     send_request(JSON.generate(data))
   end
 
-  desc "start", "Start playing from the first item on the playlist."
+  desc "now", "Starts playing the first item on the playlist (if there is any songs in list)."
   def now
     data = {type: "play", client: ip}
     send_request(JSON.generate(data))
@@ -126,6 +124,12 @@ class MusicControl < Thor
   desc "destroy", "Delete song from server."
   def destroy
     data = {type: "destroy", client: ip}
+    send_request(JSON.generate(data))
+  end
+
+  desc "state", "Shows mocp status"
+  def state
+    data = {type: "state", client: ip}
     send_request(JSON.generate(data))
   end
 end
