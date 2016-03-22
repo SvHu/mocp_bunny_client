@@ -23,3 +23,6 @@ ln -s /path/to/mocp_bunny_client/bin/play /usr/local/bin
 ```sh
 play what
 ```
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/SvHu/mocp_bunny_client/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
